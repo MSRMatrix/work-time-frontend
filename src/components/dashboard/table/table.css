@@ -1,0 +1,42 @@
+.sheet{
+    margin: 0 auto;
+    border: 2px solid black;
+    text-align: center;
+    width: fit-content;
+    h1{
+        
+    }
+
+    .table{
+    border: 2px black solid;
+    margin: 0 auto;
+    thead{
+        border: 2px black solid;
+        /* width: 100%; */
+        tr{
+
+            border: 2px black solid;
+            /* width: 100%; */
+            th{
+            flex: 1;
+            }
+        }
+    }
+    tbody{
+        border: 2px black solid;
+        display: flex;
+        justify-content: center;
+        
+        tr{
+          td{
+            border: 2px black solid;
+            input{
+                
+            }
+        }  
+        }
+        
+    }
+}
+}
+
