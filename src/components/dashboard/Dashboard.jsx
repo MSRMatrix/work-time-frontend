@@ -1,10 +1,7 @@
 import Table from "./table/Table";
 
 const Dashboard = () => {
-    return(<>
-    <Table />
-    </>)
-}
-
+  return <Table />;
+};
 
 export default Dashboard;
