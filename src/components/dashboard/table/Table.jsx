@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./table.css";
 import { getDaysInMonth } from "./getDaysInMonth";
 import Dialog from "../../dialog/Dialog";
+import { calculateTime } from "./calculateTime";
 
 const URL = import.meta.env.VITE_BACKENDURL;
 
@@ -9,15 +10,10 @@ const Table = () => {
   const days = ["samstag", "sonntag"];
   const [time, setTime] = useState([]);
   const [disableInputs, setDisableInputs] = useState(false);
-  const [disable, setDisable] = useState({
-    freeDay: false,
-    sickday: false,
-    holiday: false,
+  const [chooseMonth, setChooseMonth] = useState({
+    month: "",
+    year: "",
   });
-
-  useEffect(() => {
-    getDaysInMonth(setTime);
-  }, []);
 
   function handleCheckboxChange(e, date) {
     const { name, checked } = e.target;
@@ -56,70 +52,71 @@ const Table = () => {
     );
   }
 
-  console.log(time);
-
-  function totalHours(e, item) {
-    const { name } = e.target;
+  async function sendMonthDataToServer(month, year, monthData) {
+    try {
+      const response = await fetch(`${URL}/timelog`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          userId: "user-id",  // Benutze hier die richtige userId
+          month,
+          year,
+          monthData,
+          dayOff: 0,  // Setze andere Werte wie benötigt
+          sickDay: 0,
+          holiday: 0,
+          actualTime: 0,
+          targetValue: 0,
+        }),
+      });
   
-    // Suchen des entsprechenden Datums im Zeitprotokoll
-    const timeLog = time.find((hours) => hours.date === item.date);  // Verwende 'find' statt 'filter'
+      const data = await response.json();
   
-    // Wenn das Zeitprotokoll nicht gefunden wurde, breche die Funktion ab
-    if (!timeLog) {
-      return;
+      if (!response.ok) {
+        throw new Error(data.message || "Es gab einen Fehler beim Speichern");
+      }
+  
+      console.log("Monatsdaten erfolgreich gesendet:", data);
+    } catch (error) {
+      console.error("Fehler beim Senden der Monatsdaten:", error);
     }
-  
-    // Aufteilen der Zeitangaben in Stunden und Minuten
-    const [startH, startM] = item.startWork.split(":").map(Number);
-    const [endH, endM] = item.endWork.split(":").map(Number);
-  
-    const [startBreakH, startBreakM] = item.startBreak.split(":").map(Number);
-    const [endBreakH, endBreakM] = item.endBreak.split(":").map(Number);
-  
-    // Berechnung der gesamten Arbeitszeit in Minuten
-    let totalMinutes = (endH * 60 + endM) - (startH * 60 + startM);
-  
-    // Berechnung der Pausenzeit in Minuten
-    let breakMinutes = (endBreakH * 60 + endBreakM) - (startBreakH * 60 + startBreakM);
-  
-    if (isNaN(breakMinutes)) {
-      breakMinutes = 0; // Falls keine Pausenzeit angegeben, setze sie auf 0
-    }
-  
-    // Berechnung der tatsächlichen Arbeitszeit (abzüglich der Pausen)
-    let workMinutes = totalMinutes - breakMinutes;
-  
-    // Falls die Arbeitszeit negativ ist, gib eine Warnung aus
-    if (workMinutes < 0) return alert("Arbeitszeit kann nicht negativ sein!");
-  
-    // Formatieren des Ergebnisses
-    const result = `${Math.floor(workMinutes / 60)} Stunden ${workMinutes % 60} Minuten`;
-  
-    // Aktualisieren des Zustands mit der neuen Arbeitszeit
-    setTime((prevTime) =>
-      prevTime.map((hours) =>
-        hours.date === item.date ? { ...hours, [name]: result } : hours  // Achte darauf, dass das richtige 'hours' Objekt aktualisiert wird
-      )
-    );
   }
   
 
   return (
     <>
       <Dialog />
+      <input
+        type="month"
+        onChange={(e) => {
+          const [year, month] = e.target.value.split("-").map(Number);
+          setChooseMonth({ month, year });
+        }}
+      />
       <div>
-        <button>Neues Formular</button>
-        <button>Alles leeren</button>
+        <button
+          disabled={!chooseMonth.month || !chooseMonth.year}
+          onClick={() =>
+            getDaysInMonth(setTime, chooseMonth.month, chooseMonth.year)
+          }
+        >
+          Neues Formular
+        </button>
+        <button onClick={() => setTime([])}>Alles leeren</button>
         <button>Drucken</button>
       </div>
 
       <div className="sheet">
         <h1>Arbeitszeiten</h1>
-
+          <p>Name: </p>
+          <p>Stunden Vormonat: </p>
         <table className="table">
           <thead style={{ display: "flex" }}>
             <tr>
-              <th>Tag</th>
+              <th>Datum</th>
             </tr>
             <tr>
               <th>Arbeitszeiten</th>
@@ -157,57 +154,89 @@ const Table = () => {
                         minLength={"5"}
                         maxLength={5}
                         name="startWork"
-                        disabled={disableInputs || item.disable.freeDay || item.disable.sickday || item.disable.holiday || item.day === days[0] || item.day === days[1]}
+                        disabled={
+                          disableInputs ||
+                          item.disable.freeDay ||
+                          item.disable.sickday ||
+                          item.disable.holiday ||
+                          item.day === days[0] ||
+                          item.day === days[1]
+                        }
                       />
                     </td>
                     <td>
                       <input
-                      onChange={(e) => changeValue(e, item.date)}
+                        onChange={(e) => changeValue(e, item.date)}
                         type="text"
                         minLength={5}
                         maxLength={5}
                         name="endWork"
-                        disabled={disableInputs || item.disable.freeDay || item.disable.sickday || item.disable.holiday || item.day === days[0] || item.day === days[1]}
+                        disabled={
+                          disableInputs ||
+                          item.disable.freeDay ||
+                          item.disable.sickday ||
+                          item.disable.holiday ||
+                          item.day === days[0] ||
+                          item.day === days[1]
+                        }
                       />
                     </td>
                   </tr>
                   <tr>
                     <td>
                       <input
-                      onChange={(e) => changeValue(e, item.date)}
+                        onChange={(e) => changeValue(e, item.date)}
                         type="text"
                         minLength={5}
                         maxLength={5}
                         name="startBreak"
-                        disabled={disableInputs || item.disable.freeDay || item.disable.sickday || item.disable.holiday || item.day === days[0] || item.day === days[1]}
+                        disabled={
+                          disableInputs ||
+                          item.disable.freeDay ||
+                          item.disable.sickday ||
+                          item.disable.holiday ||
+                          item.day === days[0] ||
+                          item.day === days[1]
+                        }
                       />
                     </td>
                     <td>
                       <input
-                      onChange={(e) => changeValue(e, item.date)}
+                        onChange={(e) => changeValue(e, item.date)}
                         type="text"
                         minLength={5}
                         maxLength={5}
                         name="endBreak"
-                        disabled={disableInputs || item.disable.freeDay || item.disable.sickday || item.disable.holiday || item.day === days[0] || item.day === days[1]}
+                        disabled={
+                          disableInputs ||
+                          item.disable.freeDay ||
+                          item.disable.sickday ||
+                          item.disable.holiday ||
+                          item.day === days[0] ||
+                          item.day === days[1]
+                        }
                       />
                     </td>
                   </tr>
                   <tr>
                     <td>
                       <button
-                      onClick={(e) => totalHours(e, item)}
-                      name="totalTime"
-                        disabled={item.day === days[0] || item.day === days[1]|| item.disable.sickday || item.disable.holiday ||item.disable.freeDay}
+                        onClick={(e) => calculateTime(e, item, time, setTime)}
+                        name="totalTime"
+                        disabled={
+                          item.day === days[0] ||
+                          item.day === days[1] ||
+                          item.disable.sickday ||
+                          item.disable.holiday ||
+                          item.disable.freeDay
+                        }
                       >
                         Berechnen
-                      </button> 
+                      </button>
                     </td>
                   </tr>
                   <tr>
-                    <td>
-                    {!item.totalTime ? 0 : item.totalTime}
-                    </td>
+                    <td>{!item.totalTime ? "00S 00M" : item.totalTime}</td>
                   </tr>
                   <tr>
                     <td style={{ display: "flex" }}>
@@ -217,7 +246,13 @@ const Table = () => {
                         name="freeDay"
                         onChange={(e) => handleCheckboxChange(e, item.date)}
                         checked={item.disable.freeDay}
-                        disabled={disableInputs || item.disable.sickday || item.disable.holiday || item.day === days[0] || item.day === days[1]}
+                        disabled={
+                          disableInputs ||
+                          item.disable.sickday ||
+                          item.disable.holiday ||
+                          item.day === days[0] ||
+                          item.day === days[1]
+                        }
                       />
                       <legend>Krankentag</legend>
                       <input
@@ -225,7 +260,13 @@ const Table = () => {
                         name="sickday"
                         onChange={(e) => handleCheckboxChange(e, item.date)}
                         checked={item.disable.sickday}
-                        disabled={disableInputs || item.disable.freeDay || item.disable.holiday || item.day === days[0] || item.day === days[1]}
+                        disabled={
+                          disableInputs ||
+                          item.disable.freeDay ||
+                          item.disable.holiday ||
+                          item.day === days[0] ||
+                          item.day === days[1]
+                        }
                       />
                       <legend>Urlaubstag</legend>
                       <input
@@ -233,13 +274,28 @@ const Table = () => {
                         name="holiday"
                         onChange={(e) => handleCheckboxChange(e, item.date)}
                         checked={item.disable.holiday}
-                        disabled={disableInputs || item.disable.freeDay || item.disable.sickday || item.day === days[0] || item.day === days[1]}
+                        disabled={
+                          disableInputs ||
+                          item.disable.freeDay ||
+                          item.disable.sickday ||
+                          item.day === days[0] ||
+                          item.day === days[1]
+                        }
                       />
                     </td>
                   </tr>
                 </tbody>
               ))}
         </table>
+        <div>
+        <p>Soll AZ: </p>
+        <p>Ist AZ: </p>  
+        </div>
+        
+        <div>
+        <p>Plus/Minus: </p>  
+        </div>
+        
       </div>
     </>
   );

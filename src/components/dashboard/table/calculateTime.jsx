@@ -1,22 +1,40 @@
-export function calculateTime(start, end, startBreak, endBreak) {
-    const [startH, startM] = start.split(":").map(Number);
-    const [endH, endM] = end.split(":").map(Number);
-    const [startBreakH, startBreakM] = startBreak.split(":").map(Number);
-    const [endBreakH, endBreakM] = endBreak.split(":").map(Number);
+export function calculateTime(e, item, time, setTime) {
+  const { name } = e.target;
 
-    let totalMinutes = endH * 60 + endM - (startH * 60 + startM);
-    let breakMinutes =
-      endBreakH * 60 + endBreakM - (startBreakH * 60 + startBreakM);
-    if (isNaN(breakMinutes)) {
-      breakMinutes = 0;
-    }
+  const timeLog = time.find((hours) => hours.date === item.date); 
 
-    let workMinutes = totalMinutes - breakMinutes;
+  if (!timeLog) {
+    return;
+  }
 
-    if (workMinutes < 0) return alert("Arbeitszeit kann nicht negativ sein!");
+  const [startH, startM] = item.startWork.split(":").map(Number);
+  const [endH, endM] = item.endWork.split(":").map(Number);
 
-    return {
-      hours: Math.floor(workMinutes / 60),
-      minutes: workMinutes % 60,
-    };
+  const [startBreakH, startBreakM] = item.startBreak.split(":").map(Number);
+  const [endBreakH, endBreakM] = item.endBreak.split(":").map(Number);
+
+  let totalMinutes = endH * 60 + endM - (startH * 60 + startM);
+
+  let breakMinutes =
+    endBreakH * 60 + endBreakM - (startBreakH * 60 + startBreakM);
+
+  if (isNaN(breakMinutes)) {
+    breakMinutes = 0;
+  }
+
+  let workMinutes = totalMinutes - breakMinutes;
+
+  if (workMinutes < 0) return alert("Arbeitszeit kann nicht negativ sein!");
+
+  const result = `${Math.floor(workMinutes / 60) <= 10 ? `0${Math.floor(workMinutes / 60)}` : Math.floor(workMinutes / 60)}S ${
+   workMinutes % 60 >= 10 ? workMinutes % 60 : `0${workMinutes % 60}`
+  }M`;
+
+  // Aktualisieren des Zustands mit der neuen Arbeitszeit
+  setTime((prevTime) =>
+    prevTime.map(
+      (hours) =>
+        hours.date === item.date ? { ...hours, [name]: result } : hours
+    )
+  );
   }
