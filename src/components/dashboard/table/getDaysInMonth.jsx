@@ -20,14 +20,9 @@ export function getDaysInMonth(setTime, month, year) {
       endBreak: "",
       totalTime: "",
       day: weekday.toLowerCase(),
-      disable: {
-        freeDay: false,
-        sickday: false,
-        holiday: false,
-      },
+      disable: false,
     });
   }
-  setTime(daysArray);
-  // sendMonthDataToServer(month, year, daysArray, setTime)
-  sendMonthDataToServer(month, year, daysArray)
+  // setTime(daysArray);
+  sendMonthDataToServer(month, year, daysArray, setTime)
 }

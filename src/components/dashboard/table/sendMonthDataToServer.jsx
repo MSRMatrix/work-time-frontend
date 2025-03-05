@@ -6,12 +6,11 @@ export async function sendMonthDataToServer(month, year, daysArray, setTime) {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",  // Beachte: Verwendet Cookies (mit Login)
+        credentials: "include", 
         body: JSON.stringify({
-          userId: "user-id",  // Die User-ID muss korrekt gesetzt werden
           month,
           year,
-          monthData: daysArray,  // Die Monatsdaten (daysArray) senden
+          monthData: daysArray,  
           dayOff: 0,
           sickDay: 0,
           holiday: 0,
@@ -26,7 +25,7 @@ export async function sendMonthDataToServer(month, year, daysArray, setTime) {
       if (!response.ok) {
         throw new Error(data.message || "Es gab einen Fehler beim Speichern");
       }else{
-        // setTime(data)
+        setTime(data)
        return console.log("Monatsdaten erfolgreich gesendet:", data);
       }
       

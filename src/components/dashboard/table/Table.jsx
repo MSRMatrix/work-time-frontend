@@ -3,6 +3,9 @@ import "./table.css";
 import { getDaysInMonth } from "./getDaysInMonth";
 import Dialog from "../../dialog/Dialog";
 import { calculateTime } from "./calculateTime";
+import { logout } from "./logout";
+import { useNavigate } from "react-router-dom";
+import { deleteTimelog } from "./deleteTimelog";
 
 const URL = import.meta.env.VITE_BACKENDURL;
 
@@ -14,32 +17,12 @@ const Table = () => {
     month: "",
     year: "",
   });
+  const navigate = useNavigate();
 
   function handleCheckboxChange(e, date) {
     const { name, checked } = e.target;
-
-    console.log("Datum:", date);
-
-    const foundItem = time.find((item) => item.date === date);
-
-    if (!foundItem) {
-      return;
-    }
-
-    setTime((prevTime) =>
-      prevTime.map((item) =>
-        item.date === date
-          ? {
-              ...item,
-              disable: {
-                freeDay: name === "freeDay" ? checked : item.disable.freeDay,
-                sickday: name === "sickday" ? checked : item.disable.sickday,
-                holiday: name === "holiday" ? checked : item.disable.holiday,
-              },
-            }
-          : item
-      )
-    );
+    console.log(e.target);
+    
   }
 
   function changeValue(e, date) {
@@ -51,40 +34,6 @@ const Table = () => {
       )
     );
   }
-
-  async function sendMonthDataToServer(month, year, monthData) {
-    try {
-      const response = await fetch(`${URL}/timelog`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          userId: "user-id",  // Benutze hier die richtige userId
-          month,
-          year,
-          monthData,
-          dayOff: 0,  // Setze andere Werte wie benötigt
-          sickDay: 0,
-          holiday: 0,
-          actualTime: 0,
-          targetValue: 0,
-        }),
-      });
-  
-      const data = await response.json();
-  
-      if (!response.ok) {
-        throw new Error(data.message || "Es gab einen Fehler beim Speichern");
-      }
-  
-      console.log("Monatsdaten erfolgreich gesendet:", data);
-    } catch (error) {
-      console.error("Fehler beim Senden der Monatsdaten:", error);
-    }
-  }
-  
 
   return (
     <>
@@ -105,8 +54,9 @@ const Table = () => {
         >
           Neues Formular
         </button>
-        <button onClick={() => setTime([])}>Alles leeren</button>
+        <button onClick={() => deleteTimelog()}>Alles leeren</button>
         <button>Drucken</button>
+        <button onClick={() => logout(navigate)}>Logout</button>
       </div>
 
       <div className="sheet">
@@ -131,9 +81,9 @@ const Table = () => {
               <th>Andere</th>
             </tr>
           </thead>
-          {!time
+          {!time && !time.month
             ? ""
-            : time.map((item, key) => (
+            : time.month?.map((item, key) => (
                 <tbody
                   key={key}
                   style={{
@@ -156,9 +106,7 @@ const Table = () => {
                         name="startWork"
                         disabled={
                           disableInputs ||
-                          item.disable.freeDay ||
-                          item.disable.sickday ||
-                          item.disable.holiday ||
+                          item.disable ||
                           item.day === days[0] ||
                           item.day === days[1]
                         }
@@ -173,9 +121,7 @@ const Table = () => {
                         name="endWork"
                         disabled={
                           disableInputs ||
-                          item.disable.freeDay ||
-                          item.disable.sickday ||
-                          item.disable.holiday ||
+                          item.disable ||
                           item.day === days[0] ||
                           item.day === days[1]
                         }
@@ -192,9 +138,7 @@ const Table = () => {
                         name="startBreak"
                         disabled={
                           disableInputs ||
-                          item.disable.freeDay ||
-                          item.disable.sickday ||
-                          item.disable.holiday ||
+                          item.disable ||
                           item.day === days[0] ||
                           item.day === days[1]
                         }
@@ -209,9 +153,7 @@ const Table = () => {
                         name="endBreak"
                         disabled={
                           disableInputs ||
-                          item.disable.freeDay ||
-                          item.disable.sickday ||
-                          item.disable.holiday ||
+                          item.disable ||
                           item.day === days[0] ||
                           item.day === days[1]
                         }
@@ -226,9 +168,7 @@ const Table = () => {
                         disabled={
                           item.day === days[0] ||
                           item.day === days[1] ||
-                          item.disable.sickday ||
-                          item.disable.holiday ||
-                          item.disable.freeDay
+                          item.disable
                         }
                       >
                         Berechnen
@@ -245,11 +185,10 @@ const Table = () => {
                         type="checkbox"
                         name="freeDay"
                         onChange={(e) => handleCheckboxChange(e, item.date)}
-                        checked={item.disable.freeDay}
+                        checked={item.disable}
                         disabled={
                           disableInputs ||
-                          item.disable.sickday ||
-                          item.disable.holiday ||
+                          item.disable ||
                           item.day === days[0] ||
                           item.day === days[1]
                         }
@@ -259,11 +198,10 @@ const Table = () => {
                         type="checkbox"
                         name="sickday"
                         onChange={(e) => handleCheckboxChange(e, item.date)}
-                        checked={item.disable.sickday}
+                        checked={item.disable}
                         disabled={
                           disableInputs ||
-                          item.disable.freeDay ||
-                          item.disable.holiday ||
+                          item.disable ||
                           item.day === days[0] ||
                           item.day === days[1]
                         }
@@ -273,11 +211,10 @@ const Table = () => {
                         type="checkbox"
                         name="holiday"
                         onChange={(e) => handleCheckboxChange(e, item.date)}
-                        checked={item.disable.holiday}
+                        checked={item.disable}
                         disabled={
                           disableInputs ||
-                          item.disable.freeDay ||
-                          item.disable.sickday ||
+                          item.disable ||
                           item.day === days[0] ||
                           item.day === days[1]
                         }
