@@ -1,11 +1,16 @@
-export function calculateTime(e, item, time, setTime) {
+import { getData } from "./getData";
+
+export async function calculateTime(e, item, time, setTime, setUser) {
   const { name } = e.target;
 
-  const timeLog = time.find((hours) => hours.date === item.date); 
+  // const timeLog = time.find((hours) => hours.date === item.date); 
 
-  if (!timeLog) {
-    return;
-  }
+  // if (!timeLog) {
+  //   return;
+  // }
+
+  console.log(item);
+  
 
   const [startH, startM] = item.startWork.split(":").map(Number);
   const [endH, endM] = item.endWork.split(":").map(Number);
@@ -29,12 +34,33 @@ export function calculateTime(e, item, time, setTime) {
   const result = `${Math.floor(workMinutes / 60) <= 10 ? `0${Math.floor(workMinutes / 60)}` : Math.floor(workMinutes / 60)}S ${
    workMinutes % 60 >= 10 ? workMinutes % 60 : `0${workMinutes % 60}`
   }M`;
+console.log(result);
 
   // Aktualisieren des Zustands mit der neuen Arbeitszeit
-  setTime((prevTime) =>
-    prevTime.map(
-      (hours) =>
-        hours.date === item.date ? { ...hours, [name]: result } : hours
-    )
-  );
+  time.month.find((date) => date.date === item.date)[name] = result;
+
+console.log(time);
+
+  const URL = import.meta.env.VITE_BACKENDURL;
+    try {
+      const response = await fetch(`${URL}/timelog`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          newLog: time,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        return alert(response.statusText);
+      } else {
+        getData(setTime, setUser);
+        return console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }

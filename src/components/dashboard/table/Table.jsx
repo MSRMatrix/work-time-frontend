@@ -7,6 +7,8 @@ import { logout } from "./logout";
 import { useNavigate } from "react-router-dom";
 import { deleteTimelog } from "./deleteTimelog";
 import { Time, User } from "../../context/Context";
+import { handleCheckboxChange } from "./handleCheckboxChange";
+import { editDays } from "./editDays";
 
 const URL = import.meta.env.VITE_BACKENDURL;
 
@@ -21,78 +23,22 @@ const Table = () => {
   });
   const [edit, setEdit] = useState(false);
   const navigate = useNavigate();
-
-  async function handleCheckboxChange(e, date) {
-    const { name, value } = e.target;
-    const URL = import.meta.env.VITE_BACKENDURL;
-    try {
-      const response = await fetch(`${URL}/timelog/check`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          name: name,
-          value: value,
-          date: date,
-        }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        return alert(response.statusText);
-      } else {
-        setTime(data);
-        return console.log(data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  const [input, setInput] = useState([
+    {name: "startWork",
+      data: ""
+    },
+    {name: "endWork",
+      data: ""},
+    {name: "startBreak",
+      data: ""},
+    {name: "endBreak",
+      data: ""},
+    
+  ])
 
   function changeValue(e, date) {
     const { name, value } = e.target;
-
-    setTime((prevTime) =>
-      prevTime.map((item) =>
-        item.date === date ? { ...item, [name]: value.trim() } : item
-      )
-    );
-  }
-
-  async function editProfile(e) {
-    e.preventDefault();
-    const URL = import.meta.env.VITE_BACKENDURL;
-    const formData = new FormData(e.target);
-    const formDataObject = {};
-    formData.forEach((value, key) => {
-        formDataObject[key] = value;
-    })
-    try{
-        const response = await fetch(`${URL}/user/time`,{
-            method: "PATCH",
-            headers:{
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify({
-              holiday: formDataObject.holiday,
-              dayOff: formDataObject.dayOff,
-              sickDay: formDataObject.sickDay,
-              totalHours: formDataObject.totalHours,
-            }),  
-        });
-        const data = await response.json();
-        if(!response.ok){
-           return console.log(data.message);
-        }else{
-            setUser(data);
-            setEdit(false)
-        }
-    }catch(error){
-       return alert(error)
-    }
-    setEdit(false)
+    time.month.find((item) => item.date === date)[name] = value;
   }
 
   return (
@@ -127,11 +73,15 @@ const Table = () => {
       <div className="sheet">
         <h1>Arbeitszeiten</h1>
         {edit ? (
-          <form action="" onSubmit={(e) => editProfile(e)}>
+          <form action="" onSubmit={(e) => editDays(e, setTime, setUser, setEdit)}>
             <input defaultValue={user.holiday} type="number" name="holiday" />
             <input defaultValue={user.dayOff} type="number" name="dayOff" />
             <input defaultValue={user.sickDay} type="number" name="sickDay" />
-            <input defaultValue={user.totalHours} type="number" name="totalHours" />
+            <input
+              defaultValue={user.totalHours}
+              type="number"
+              name="totalHours"
+            />
             <button type="submit">Ändern</button>
           </form>
         ) : (
@@ -184,6 +134,7 @@ const Table = () => {
                       <input
                         onChange={(e) => changeValue(e, item.date)}
                         type="text"
+                        defaultValue={item.startWork}
                         minLength={"5"}
                         maxLength={5}
                         name="startWork"
@@ -201,6 +152,7 @@ const Table = () => {
                       <input
                         onChange={(e) => changeValue(e, item.date)}
                         type="text"
+                        defaultValue={item.endWork}
                         minLength={5}
                         maxLength={5}
                         name="endWork"
@@ -220,6 +172,7 @@ const Table = () => {
                       <input
                         onChange={(e) => changeValue(e, item.date)}
                         type="text"
+                        defaultValue={item.startBreak}
                         minLength={5}
                         maxLength={5}
                         name="startBreak"
@@ -237,6 +190,7 @@ const Table = () => {
                       <input
                         onChange={(e) => changeValue(e, item.date)}
                         type="text"
+                        defaultValue={item.endBreak}
                         minLength={5}
                         maxLength={5}
                         name="endBreak"
@@ -254,7 +208,7 @@ const Table = () => {
                   <tr>
                     <td>
                       <button
-                        onClick={(e) => calculateTime(e, item, time, setTime)}
+                        onClick={(e) => calculateTime(e, item, time, setTime, setUser)}
                         name="totalTime"
                         disabled={
                           item.day === days[0] ||
@@ -277,7 +231,9 @@ const Table = () => {
                       <input
                         type="checkbox"
                         name="dayOff"
-                        onChange={(e) => handleCheckboxChange(e, item.date)}
+                        onChange={(e) =>
+                          handleCheckboxChange(e, item.date, setTime, setUser)
+                        }
                         checked={item.dayOff}
                         disabled={
                           disableInputs ||
@@ -291,7 +247,9 @@ const Table = () => {
                       <input
                         type="checkbox"
                         name="sickDay"
-                        onChange={(e) => handleCheckboxChange(e, item.date)}
+                        onChange={(e) =>
+                          handleCheckboxChange(e, item.date, setTime, setUser)
+                        }
                         checked={item.sickDay}
                         disabled={
                           disableInputs ||
@@ -305,7 +263,9 @@ const Table = () => {
                       <input
                         type="checkbox"
                         name="holiday"
-                        onChange={(e) => handleCheckboxChange(e, item.date)}
+                        onChange={(e) =>
+                          handleCheckboxChange(e, item.date, setTime, setUser)
+                        }
                         checked={item.holiday}
                         disabled={
                           disableInputs ||
