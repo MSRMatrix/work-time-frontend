@@ -8,8 +8,10 @@ export async function calculateTime(e, item, time, setTime, setUser) {
   // if (!timeLog) {
   //   return;
   // }
-
-  console.log(item);
+  let oldTime;
+  if(item.totalTime){
+    oldTime = item.totalTime
+  }
   
 
   const [startH, startM] = item.startWork.split(":").map(Number);
@@ -34,12 +36,26 @@ export async function calculateTime(e, item, time, setTime, setUser) {
   const result = `${Math.floor(workMinutes / 60) <= 10 ? `0${Math.floor(workMinutes / 60)}` : Math.floor(workMinutes / 60)}S ${
    workMinutes % 60 >= 10 ? workMinutes % 60 : `0${workMinutes % 60}`
   }M`;
-console.log(result);
+
+  const newResultStart = parseFloat(result.split(" ")[0]);
+  const newResultEnd = parseFloat(result.split(" ")[1]);
+
+  let oldResultStart = 0;
+  let oldResultEnd = 0;
+  if(oldTime){
+    oldResultStart = parseFloat(oldTime.split(" ")[0]);
+    oldResultEnd = parseFloat(oldTime.split(" ")[1]);
+  }
+  
+  let resultObject = {
+    first: newResultStart - oldResultStart,
+    end: Math.abs(newResultEnd - oldResultEnd)
+  };
+  
+  console.log(resultObject);
 
   // Aktualisieren des Zustands mit der neuen Arbeitszeit
   time.month.find((date) => date.date === item.date)[name] = result;
-
-console.log(time);
 
   const URL = import.meta.env.VITE_BACKENDURL;
     try {
@@ -51,6 +67,7 @@ console.log(time);
         credentials: "include",
         body: JSON.stringify({
           newLog: time,
+          result: resultObject
         }),
       });
       const data = await response.json();

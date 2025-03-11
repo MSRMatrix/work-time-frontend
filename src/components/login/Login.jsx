@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import BackButton from "../backButton/BackButton";
+import { useContext } from "react";
+import { Time, User } from "../context/Context";
+import { getData } from "../dashboard/table/getData";
 
 const Login = () => { 
     const navigate = useNavigate();
-
+    const { time, setTime } = useContext(Time);
+    const { user, setUser } = useContext(User);
     async function loginData(e){
      e.preventDefault()
      const URL = import.meta.env.VITE_BACKENDURL;
@@ -29,6 +33,7 @@ const Login = () => {
             return console.log(data.message);
          }else{
              console.log("Login erfolgreich!");
+              getData(setTime, setUser)
              navigate("/dashboard")
          }
      }catch(error){

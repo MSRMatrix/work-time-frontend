@@ -9,6 +9,7 @@ import { deleteTimelog } from "./deleteTimelog";
 import { Time, User } from "../../context/Context";
 import { handleCheckboxChange } from "./handleCheckboxChange";
 import { editDays } from "./editDays";
+import { getData } from "./getData";
 
 const URL = import.meta.env.VITE_BACKENDURL;
 
@@ -23,18 +24,6 @@ const Table = () => {
   });
   const [edit, setEdit] = useState(false);
   const navigate = useNavigate();
-  const [input, setInput] = useState([
-    {name: "startWork",
-      data: ""
-    },
-    {name: "endWork",
-      data: ""},
-    {name: "startBreak",
-      data: ""},
-    {name: "endBreak",
-      data: ""},
-    
-  ])
 
   function changeValue(e, date) {
     const { name, value } = e.target;
@@ -60,7 +49,7 @@ const Table = () => {
         >
           Neues Formular
         </button>
-        <button onClick={() => deleteTimelog()}>Alles leeren</button>
+        <button onClick={() => {deleteTimelog(), getData(setTime, setUser)}}>Alles leeren</button>
         <button>Drucken</button>
         <button onClick={() => logout(navigate)}>Logout</button>
       </div>
@@ -89,7 +78,7 @@ const Table = () => {
             <p>Feiertage: {user.holiday}</p>
             <p>Urlaubstage: {user.dayOff}</p>
             <p>Krankheitstage: {user.sickDay}</p>
-            <p>Stunden Vormonat: {user.totalHours}</p>
+            <p>Stunden Insgesamt: {user.totalHours || "00S 00M"}</p>
           </div>
         )}
         <table className="table">
@@ -110,9 +99,8 @@ const Table = () => {
               <th>Andere</th>
             </tr>
           </thead>
-          {!time && !time?.month
-            ? ""
-            : time.month?.map((item, key) => (
+          {time && time?.month
+            ?  time.month?.map((item, key) => (
                 <tbody
                   key={key}
                   style={{
@@ -278,14 +266,18 @@ const Table = () => {
                     </td>
                   </tr>
                 </tbody>
-              ))}
+            
+             )): ""}
         </table>
         <div>
-          <p>Soll AZ: </p>
-          <p>Ist AZ: </p>
+          <p>Soll AZ: {time ? time.targetValue : ""}</p>
+          <p>Ist AZ: {time ? time.actualTime : ""}</p>
         </div>
         <div>
-          <p>Plus/Minus: </p>
+          <p>Plus/Minus: 00S 00M
+            {/* {time ? time.actualTime - time.targetValue : ""} */}
+
+          </p>
         </div>
       </div>
     </>

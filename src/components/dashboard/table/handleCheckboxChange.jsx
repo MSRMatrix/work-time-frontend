@@ -16,12 +16,11 @@ export async function handleCheckboxChange(e, date, setTime, setUser) {
         date: date,
       }),
     });
-    const data = await response.json();
     if (!response.ok) {
       return alert(response.statusText);
     } else {
       getData(setTime, setUser);
-      return console.log(data);
+      return 
     }
   } catch (error) {
     console.log(error);

@@ -15,10 +15,7 @@ export async function sendMonthDataToServer(month, year, daysArray, setTime) {
           targetValue: 0,
         }),
       });
-  
       const data = await response.json();
-      console.log(data);
-  
       if (!response.ok) {
         throw new Error(data.message || "Es gab einen Fehler beim Speichern");
       }else{
