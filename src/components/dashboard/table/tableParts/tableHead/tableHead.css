@@ -1,0 +1,14 @@
+.table-head{
+    display: flex;
+    flex-direction: column;
+    .entire-days{
+        display: flex;
+        border: 3px black solid;
+        gap: 30px;
+        margin: 0 auto;
+        width: fit-content;
+        p{
+            width: max-content;
+        }
+    }
+}

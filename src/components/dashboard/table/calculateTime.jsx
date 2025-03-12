@@ -51,8 +51,6 @@ export async function calculateTime(e, item, time, setTime, setUser) {
     first: newResultStart - oldResultStart,
     end: Math.abs(newResultEnd - oldResultEnd)
   };
-  
-  console.log(resultObject);
 
   // Aktualisieren des Zustands mit der neuen Arbeitszeit
   time.month.find((date) => date.date === item.date)[name] = result;
