@@ -23,6 +23,8 @@ const Registration = () => {
             body: JSON.stringify({
               password: formDataObject.password,
               email: formDataObject.email,
+              name: formDataObject.name,
+              company: formDataObject.company,
             }),  
         });
         const data = await response.json();
@@ -42,6 +44,17 @@ const Registration = () => {
       <form action="" onSubmit={(e) => registrationData(e)}>
         <fieldset>
           <legend>Registration</legend>
+
+          <fieldset>
+            <legend>Name</legend>
+            <input name="name" type="text" required />
+          </fieldset>
+
+          <fieldset>
+            <legend>Company</legend>
+            <input name="company" type="text" required />
+          </fieldset>
+
           <fieldset>
             <legend>Email</legend>
             <input name="email" type="email" required />
@@ -51,6 +64,8 @@ const Registration = () => {
             <legend>Password</legend>
             <input name="password" type="password" required />
           </fieldset>
+
+
 
           <button type="submit">Registrieren</button>
         </fieldset>

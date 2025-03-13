@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import "./table.css";
-import Dialog from "../../dialog/Dialog";
 import { Time } from "../../context/Context";
 import TableBody from "./tableParts/tableBody/TableBody";
 import TableFooter from "./tableParts/tableFooter/TableFooter";
@@ -10,6 +9,7 @@ import Settings from "./tableParts/settings/Settings";
 // const URL = import.meta.env.VITE_BACKENDURL;
 
 const Table = () => {
+  const [showWindow, setShowWindow] = useState("")
   const days = ["samstag", "sonntag"];
   const { time, setTime } = useContext(Time);
   const [disableInputs, setDisableInputs] = useState(false);
@@ -17,24 +17,44 @@ const Table = () => {
     month: "",
     year: "",
   });
-  const [edit, setEdit] = useState(false);
-  const [showWindow, setSowWindow] = useState(false)
 
   function changeValue(e, date) {
-    const { name, value } = e.target;
-    time.month.find((item) => item.date === date)[name] = value;
+    let { name, value } = e.target;
+  
+    // Entferne alle Zeichen außer Zahlen und ":"
+    value = value.replace(/[^0-9:]/g, '');
+  
+    // Wenn mehr als 2 Zeichen und kein ":" enthalten sind, füge ":" hinzu
+    if (value.length > 2 && !value.includes(':')) {
+      value = value.slice(0, 2) + ':' + value.slice(2, 4); 
+    }
+  
+    // Finde das richtige Element in `time.month` und setze den Wert
+    const updatedTime = time.month.map(item => 
+      item.date === date ? { ...item, [name]: value } : item
+    );
+  
+    // Aktualisiere den Zustand, um die Änderung zu speichern (muss `setTime` verwendet werden)
+    setTime(prevState => ({
+      ...prevState,
+      month: updatedTime
+    }));
+    console.log(time);
+    
   }
+  
+  
   return (
     <>
-     { showWindow ? <Dialog /> : ""}
      <Settings 
+     showWindow={showWindow} 
+     setShowWindow={setShowWindow}
      setChooseMonth={setChooseMonth}  
-     chooseMonth={chooseMonth}  
-     edit={edit}  
-     setEdit={setEdit} />
+     chooseMonth={chooseMonth} />
       
-      <div className="sheet">
-        <TableHead edit={edit} setEdit={setEdit} />
+      <div className="sheet" style={{background: time && time.backgroundColor ? time.backgroundColor : "", color: time && time.fontColor ? time.fontColor : ""}}>
+        <TableHead showWindow={showWindow} 
+     setShowWindow={setShowWindow} />
         <table className="table">
           <thead>
             <tr>

@@ -5,15 +5,15 @@ import { getDaysInMonth } from "../../getDaysInMonth";
 import { logout } from "../../logout";
 import { Time, User } from "../../../../context/Context";
 import { useNavigate } from "react-router-dom";
+import { colorHandler } from "./colorHandler/ColorHandler";
 
-const Settings = ({setChooseMonth, chooseMonth, edit, setEdit}) => {
+const Settings = ({setChooseMonth, chooseMonth, setShowWindow, showWindow}) => {
     const navigate = useNavigate();
     const { time, setTime } = useContext(Time);
   const { user, setUser } = useContext(User); 
-  
-  async function getFormData(e){
-    e.preventDefault()
- }
+  console.log(showWindow);
+
+
     return(<>
      <div className="settings">
       <input
@@ -43,21 +43,25 @@ const Settings = ({setChooseMonth, chooseMonth, edit, setEdit}) => {
         <button onClick={() => logout(navigate)}>Logout</button>
       </div>
 
-      {!edit ? (
-        <button onClick={() => setEdit(true)}>Bearbeiten</button>
-      ) : (
-        <button onClick={() => setEdit(false)}>Bearbeitung beenden</button>
-      )}  
+
+      <button onClick={() => setShowWindow("profile")}>Profil bearbeiten</button>
+      <button onClick={() => setShowWindow("time")}>Zeit anpassen</button>
+
+          <form action="" onSubmit={(e) => colorHandler(e, setTime, setUser)}>
+          <fieldset>
+          <legend>Farbeinstellungen</legend>  
+        <legend>Hintergrundfarbe:</legend>
+        <input onChange={(e) => console.log(e.target.value)} type="color" name="backgroundColor"/>
+
+        <legend>Schriftfarbe:</legend>
+        <input onChange={(e) => console.log(e.target.value)} type="color" name="fontColor"/>
+
+        <button type="submit">Ändern</button>
+      </fieldset>  
+          </form>
+      
+
       </div>
-
-      <form action="" onSubmit={(e) => getFormData(e)} >
-                <legend>Name:</legend>
-                <input type="text" name="name"/>
-
-                <legend>Firma:</legend>
-                <input type="text" name="company"/>
-                
-      </form>
     </>)
 }
 

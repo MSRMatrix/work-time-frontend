@@ -1,6 +1,6 @@
-import { getData } from "./getData";
+import { getData } from "../../../getData";
 
-export async function editDays(e, setTime, setUser, setEdit) {
+export async function colorHandler(e, setTime, setUser) {
     e.preventDefault();
     const URL = import.meta.env.VITE_BACKENDURL;
     const formData = new FormData(e.target);
@@ -9,17 +9,15 @@ export async function editDays(e, setTime, setUser, setEdit) {
       formDataObject[key] = value;
     });
     try {
-      const response = await fetch(`${URL}/user/time`, {
+      const response = await fetch(`${URL}/timelog/color`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
         body: JSON.stringify({
-          holiday: formDataObject.holiday,
-          dayOff: formDataObject.dayOff,
-          sickDay: formDataObject.sickDay,
-          totalHours: formDataObject.totalHours,
+          backgroundColor: formDataObject.backgroundColor,
+          fontColor: formDataObject.fontColor,
         }),
       });
       const data = await response.json();
@@ -27,10 +25,8 @@ export async function editDays(e, setTime, setUser, setEdit) {
         return console.log(data.message);
       } else {
         getData(setTime, setUser);
-        setEdit(false);
       }
     } catch (error) {
       return alert(error);
     }
-    setEdit(false);
   }
