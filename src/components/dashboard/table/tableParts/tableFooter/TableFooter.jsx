@@ -54,9 +54,6 @@ const TableFooter = () => {
     if (actualTimeStart < targetValueStart && actualTimeEnd < test) {
       remainder = actualTimeEnd - test;
     }
-
-    console.log(actualTimeStart, actualTimeEnd);
-    
     
     // Zeitformatierung
     const formatTime = (time) =>
