@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { Time, User } from "../../../../context/Context";
-import { EditProfileDialog } from "../../../../dialog/Dialog";
+import { EditProfileDialog, EditTimeDialog } from "../../../../dialog/Dialog";
 import "./tableHead.css";
 
 const TableHead = ({ showWindow, setShowWindow }) => {
@@ -16,6 +16,13 @@ const TableHead = ({ showWindow, setShowWindow }) => {
           setTime={setTime}
           setUser={setUser}
           user={user}
+        />
+      ) : showWindow === "time" ? (
+        <EditTimeDialog
+          setShowWindow={setShowWindow}
+          time={time}
+          setTime={setTime}
+          setUser={setUser}
         />
       ) : (
         ""

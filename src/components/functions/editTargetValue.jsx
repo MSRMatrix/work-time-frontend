@@ -1,6 +1,8 @@
-import { getData } from "../../../getData";
+import { getData } from "./getData";
 
-export async function colorHandler(e, setTime, setUser) {
+export async function editTargetValue(e, setTime, setUser) {
+    console.log(e.preventDefault());
+    
     e.preventDefault();
     const URL = import.meta.env.VITE_BACKENDURL;
     const formData = new FormData(e.target);
@@ -8,16 +10,20 @@ export async function colorHandler(e, setTime, setUser) {
     formData.forEach((value, key) => {
       formDataObject[key] = value;
     });
+
+    const hours = Number(formDataObject.S) < 10 ? `0${formDataObject.S}S` : `${formDataObject.S}S`
+    const minutes = Number(formDataObject.M) < 10 ? `0${formDataObject.M}M` : `${formDataObject.M}M`
+    const targetValue = `${hours} ${minutes}`;   
+    
     try {
-      const response = await fetch(`${URL}/timelog/color`, {
+      const response = await fetch(`${URL}/timelog/target-value`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
         body: JSON.stringify({
-          backgroundColor: formDataObject.backgroundColor,
-          fontColor: formDataObject.fontColor,
+            targetValue: targetValue
         }),
       });
       const data = await response.json();
@@ -29,4 +35,4 @@ export async function colorHandler(e, setTime, setUser) {
     } catch (error) {
       return alert(error);
     }
-  }
+}

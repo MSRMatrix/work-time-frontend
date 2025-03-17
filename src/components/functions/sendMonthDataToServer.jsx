@@ -1,4 +1,6 @@
-export async function sendMonthDataToServer(month, year, daysArray, setTime) {
+import { getData } from "./getData";
+
+export async function sendMonthDataToServer(month, year, daysArray, setTime, setUser) {
     const URL = import.meta.env.VITE_BACKENDURL;
     try {
       const response = await fetch(`${URL}/timelog`, {
@@ -15,12 +17,11 @@ export async function sendMonthDataToServer(month, year, daysArray, setTime) {
           targetValue: 0,
         }),
       });
-      const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || "Es gab einen Fehler beim Speichern");
+        throw new Error("Es gab einen Fehler beim Speichern");
       }else{
-        setTime(data)
-       return console.log("Monatsdaten erfolgreich gesendet:", data);
+        getData(setTime, setUser)
+       return console.log("Monatsdaten erfolgreich gesendet");
       }
       
     } catch (error) {

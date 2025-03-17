@@ -3,11 +3,6 @@ import { getData } from "./getData";
 export async function calculateTime(e, item, time, setTime, setUser) {
   const { name } = e.target;
 
-  // const timeLog = time.find((hours) => hours.date === item.date); 
-
-  // if (!timeLog) {
-  //   return;
-  // }
   let oldTime;
   if(item.totalTime){
     oldTime = item.totalTime
@@ -33,7 +28,7 @@ export async function calculateTime(e, item, time, setTime, setUser) {
 
   if (workMinutes < 0) return alert("Arbeitszeit kann nicht negativ sein!");
 
-  const result = `${Math.floor(workMinutes / 60) <= 10 ? `0${Math.floor(workMinutes / 60)}` : Math.floor(workMinutes / 60)}S ${
+  const result = `${Math.floor(workMinutes / 60) < 10 ? `0${Math.floor(workMinutes / 60)}` : Math.floor(workMinutes / 60)}S ${
    workMinutes % 60 >= 10 ? workMinutes % 60 : `0${workMinutes % 60}`
   }M`;
 
@@ -51,10 +46,6 @@ export async function calculateTime(e, item, time, setTime, setUser) {
     first: newResultStart - oldResultStart,
     end: newResultEnd - oldResultEnd
   };
-
-  console.log(resultObject);
-  
-
   // Aktualisieren des Zustands mit der neuen Arbeitszeit
   time.month.find((date) => date.date === item.date)[name] = result;
 

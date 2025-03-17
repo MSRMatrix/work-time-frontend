@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
 import { Time, User } from "../../../../context/Context";
-import { calculateTime } from "../../calculateTime";
-import { handleCheckboxChange } from "../../handleCheckboxChange";
-import { getData } from "../../getData";
+import { handleCheckboxChange } from "../../../../functions/handleCheckboxChange"; 
+import { getData } from "../../../../functions/getData";
+import { calculateTime } from "../../../../functions/calculateTime";
 
 const TableBody = ({ days, changeValue, disableInputs }) => {
   const { time, setTime } = useContext(Time);

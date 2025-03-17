@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import BackButton from "../backButton/BackButton";
 import { useContext } from "react";
 import { Time, User } from "../context/Context";
-import { getData } from "../dashboard/table/getData";
+import { getData } from "../functions/getData"; 
 
 const Login = () => { 
     const navigate = useNavigate();

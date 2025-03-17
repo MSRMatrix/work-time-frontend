@@ -1,6 +1,6 @@
 import { sendMonthDataToServer } from "./sendMonthDataToServer";
 
-export function getDaysInMonth(setTime, month, year) {
+export function getDaysInMonth(setTime, month, year, setUser) {
   const lastDayOfMonth = new Date(year, month, 0).getDate();
   const daysArray = [];
 
