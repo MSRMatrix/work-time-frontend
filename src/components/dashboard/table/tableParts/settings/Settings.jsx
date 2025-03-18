@@ -43,7 +43,7 @@ const Settings = ({
           >
             Alles leeren
           </button>
-          <button>Drucken</button>
+          {/* <button onClick={() => navigate("/")}>Drucken</button> */}
           <button onClick={() => logout(navigate)}>Logout</button>
         </div>
 
@@ -53,22 +53,28 @@ const Settings = ({
         <button onClick={() => setShowWindow("time")}>Zeit anpassen</button>
 
         <form action="" onSubmit={(e) => colorHandler(e, setTime, setUser)}>
-          <fieldset>
-            <legend>Farbeinstellungen</legend>
-            <legend>Hintergrundfarbe:</legend>
-            <input
-              type="color"
-              name="backgroundColor"
-            />
+        <fieldset>
+  <legend>Farbeinstellungen</legend>
 
-            <legend>Schriftfarbe:</legend>
-            <input
-              type="color"
-              name="fontColor"
-            />
+  <legend>Hintergrundfarbe:</legend>
+  <input
+    type="color"
+    name="backgroundColor"
+    value={time.backgroundColor|| "#2214db"}
+    onChange={(e) => setTime({ ...time, backgroundColor: e.target.value })}
+  />
 
-            <button type="submit">Ändern</button>
-          </fieldset>
+  <legend>Schriftfarbe:</legend>
+  <input
+    type="color"
+    name="fontColor"
+    value={time.fontColor || "#ffffff"}
+    onChange={(e) => setTime({ ...time, fontColor: e.target.value })}
+  />
+
+  <button type="submit">Ändern</button>
+</fieldset>
+
         </form>
       </div>
     </>

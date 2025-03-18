@@ -13,6 +13,7 @@ import Login from "./components/login/Login"
 import Tutorial from "./components/tutorial/Tutorial";
 import Home from "./components/home/Home";
 import Dashboard from "./components/dashboard/Dashboard"
+import Print from "./components/print/Print"
 
 function App() {
   const [user, setUser] = useState([]);
@@ -27,7 +28,8 @@ function App() {
         { element: <Registration />, path: "/registration" },
         { element: <Login />, path: "/login" },
         { element: <Tutorial />, path: "/tutorial" },
-        { element: <Dashboard /> , path: "/dashboard"}
+        { element: <Dashboard /> , path: "/dashboard"},
+        { element: <Print /> , path: "/print"},
       ],
     },
   ]);

@@ -6,10 +6,10 @@ export function getDaysInMonth(setTime, month, year, setUser) {
 
   for (let day = 1; day <= lastDayOfMonth; day++) {
     const date = new Date(year, month - 1, day);
-    const formattedDay = day.toString().padStart(2, "0"); 
+    const formattedDay = day.toString().padStart(2, "0");
     const formattedMonth = month.toString().padStart(2, "0");
-    const formattedYear = year.toString().padStart(2, "0")
-    
+    const formattedYear = year.toString().padStart(2, "0");
+
     const weekday = date.toLocaleDateString("de-DE", { weekday: "long" });
 
     daysArray.push({
@@ -24,5 +24,5 @@ export function getDaysInMonth(setTime, month, year, setUser) {
     });
   }
   // setTime(daysArray);
-  sendMonthDataToServer(month, year, daysArray, setTime)
+  sendMonthDataToServer(month, year, daysArray, setTime, setUser);
 }

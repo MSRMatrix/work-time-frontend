@@ -17,12 +17,10 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
               style={{
                 background:
                   item.day === days[0] ||
-                  item.day === days[1] ||
-                  item.dayOff ||
-                  item.sickDay ||
-                  item.holiday
+                  item.day === days[1]
+                  
                     ? "gray"
-                    : "",
+                    : item.sickDay ? "red" : item.dayOff ? "green" : item.holiday ? "blue" : ""
               }}
             >
               <tr>
@@ -33,7 +31,7 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                   <input
                     onChange={(e) => changeValue(e, item.date)}
                     type="text"
-                    defaultValue={item.startWork}
+                    value={item.startWork || ""}
                     minLength={"5"}
                     maxLength={5}
                     name="startWork"
@@ -51,7 +49,7 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                   <input
                     onChange={(e) => changeValue(e, item.date)}
                     type="text"
-                    defaultValue={item.endWork}
+                    value={item.endWork || ""}
                     minLength={5}
                     maxLength={5}
                     name="endWork"
@@ -71,7 +69,7 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                   <input
                     onChange={(e) => changeValue(e, item.date)}
                     type="text"
-                    defaultValue={item.startBreak}
+                    value={item.startBreak || ""}
                     minLength={5}
                     maxLength={5}
                     name="startBreak"
@@ -89,7 +87,7 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                   <input
                     onChange={(e) => changeValue(e, item.date)}
                     type="text"
-                    defaultValue={item.endBreak}
+                    value={item.endBreak || ""}
                     minLength={5}
                     maxLength={5}
                     name="endBreak"
@@ -109,6 +107,7 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                   <button
                     onClick={(e) =>
                       calculateTime(e, item, time, setTime, setUser)
+                     
                     }
                     name="totalTime"
                     disabled={
@@ -127,23 +126,23 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                 <td>{!item.totalTime ? "00S 00M" : item.totalTime}</td>
               </tr>
               <tr>
-                <td style={{ display: "flex" }}> <legend>U</legend>
+                <td style={{ display: "flex"}}> <legend style={{color: "green"}}>U</legend>
                   <input
                     type="checkbox"
-                    name="holiday"
+                    name="dayOff"
                     onChange={(e) => {
                       handleCheckboxChange(e, item.date, setTime, setUser),
                         getData(setTime, setUser);
                     }}
-                    checked={item.holiday}
+                    checked={item.dayOff}
                     disabled={
                       disableInputs ||
-                      item.dayOff ||
+                      item.holiday ||
                       item.sickDay ||
                       item.day === days[0] ||
                       item.day === days[1]
                     }
-                  /><legend>K</legend>
+                  /><legend style={{color: "red"}}>K</legend>
                   <input
                     type="checkbox"
                     name="sickDay"
@@ -160,18 +159,18 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                       item.day === days[1]
                     }
                   />
-                  <legend>F</legend>
+                  <legend style={{color: "blue"}}>F</legend>
                   <input
                     type="checkbox"
-                    name="dayOff"
+                    name="holiday"
                     onChange={(e) => {
                       handleCheckboxChange(e, item.date, setTime, setUser),
                         getData(setTime, setUser);
                     }}
-                    checked={item.dayOff}
+                    checked={item.holiday}
                     disabled={
                       disableInputs ||
-                      item.holiday ||
+                      item.dayOff ||
                       item.sickDay ||
                       item.day === days[0] ||
                       item.day === days[1]
