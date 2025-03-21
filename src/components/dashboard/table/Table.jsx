@@ -11,7 +11,7 @@ import { getData } from "../../functions/getData";
 
 const Table = () => {
   const [showWindow, setShowWindow] = useState("");
-  const days = ["samstag", "sonntag"];
+  const [days, setDays] = useState(["samstag", "sonntag"]);
   const { time, setTime } = useContext(Time);
   const { user, setUser } = useContext(User);
   const [disableInputs, setDisableInputs] = useState(false);
@@ -75,6 +75,7 @@ const Table = () => {
       month: updatedTime,
     }));
   }
+  
 
   return (
     <>
@@ -83,6 +84,8 @@ const Table = () => {
         setShowWindow={setShowWindow}
         setChooseMonth={setChooseMonth}
         chooseMonth={chooseMonth}
+        days={days}
+        setDays={setDays}
       />
 
       <div

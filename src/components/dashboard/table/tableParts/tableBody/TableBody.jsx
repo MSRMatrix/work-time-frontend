@@ -40,8 +40,7 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                       item.dayOff ||
                       item.sickDay ||
                       item.holiday ||
-                      item.day === days[0] ||
-                      item.day === days[1]
+                      days.includes("samstag") || days.includes("sonntag")
                     }
                   />
                 </td>
@@ -58,8 +57,7 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                       item.dayOff ||
                       item.sickDay ||
                       item.holiday ||
-                      item.day === days[0] ||
-                      item.day === days[1]
+                      days.includes("samstag") || days.includes("sonntag")
                     }
                   />
                 </td>
@@ -78,8 +76,7 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                       item.dayOff ||
                       item.sickDay ||
                       item.holiday ||
-                      item.day === days[0] ||
-                      item.day === days[1]
+                      days.includes("samstag") || days.includes("sonntag")
                     }
                   />
                 </td>
@@ -96,8 +93,7 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                       item.dayOff ||
                       item.sickDay ||
                       item.holiday ||
-                      item.day === days[0] ||
-                      item.day === days[1]
+                      days.includes("samstag") || days.includes("sonntag")
                     }
                   />
                 </td>
@@ -111,8 +107,8 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                     }
                     name="totalTime"
                     disabled={
-                      item.day === days[0] ||
-                      item.day === days[1] ||
+                      days.includes("samstag") || days.includes("sonntag")
+                      ||
                       item.dayOff ||
                       item.sickDay ||
                       item.holiday
@@ -139,8 +135,7 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                       disableInputs ||
                       item.holiday ||
                       item.sickDay ||
-                      item.day === days[0] ||
-                      item.day === days[1]
+                      days.includes("samstag") || days.includes("sonntag")
                     }
                   /><legend style={{color: "red"}}>K</legend>
                   <input
@@ -155,8 +150,7 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                       disableInputs ||
                       item.dayOff ||
                       item.holiday ||
-                      item.day === days[0] ||
-                      item.day === days[1]
+                      days.includes("samstag") || days.includes("sonntag")
                     }
                   />
                   <legend style={{color: "blue"}}>F</legend>
@@ -172,12 +166,9 @@ const TableBody = ({ days, changeValue, disableInputs }) => {
                       disableInputs ||
                       item.dayOff ||
                       item.sickDay ||
-                      item.day === days[0] ||
-                      item.day === days[1]
+                      days.includes("samstag") || days.includes("sonntag")
                     }
                   />
-                  
-                 
                 </td>
               </tr>
             </tbody>

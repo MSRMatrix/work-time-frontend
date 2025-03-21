@@ -26,8 +26,6 @@ const Home = () => {
         setTime(data.timelog);
         setUser(data.user);
         navigate("/dashboard")
-        console.log(`test`);
-        
         return console.log("Daten erfolgreich geladen!");
       }
     } catch (error) {

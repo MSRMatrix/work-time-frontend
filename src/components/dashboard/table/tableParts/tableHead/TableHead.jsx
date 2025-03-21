@@ -38,7 +38,7 @@ const TableHead = ({ showWindow, setShowWindow }) => {
         <p>Feiertage: {user.holiday}</p>
         <p>Urlaubstage: {user.dayOff}</p>
         <p>Krankheitstage: {user.sickDay}</p>
-        <p>Stunden Vormonat: {time.hoursFromLastMonth}</p>
+        <p>Stunden Vormonat: {time && time.hoursFromLastMonth || 0}</p>
       </div>
 
       <p>
